@@ -12,6 +12,8 @@
 ## 后台
 [FileManageApi](https://github.com/renserve/fileManageApi)
 
+登录账号super，密码：123456
+
 ## Run
 
 ``` bash
