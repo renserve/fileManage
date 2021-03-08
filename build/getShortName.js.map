@@ -1,0 +1,1 @@
+{"version":3,"file":"getShortName.js","sourceRoot":"","sources":["getShortName.ts"],"names":[],"mappings":"AAAA;;;GAGG;AACH,MAAM,CAAC,MAAM,YAAY,GAAG,CAAC,GAAQ,EAAE,EAAE;IACvC,OAAO,iBAAiB,GAAG,CAAC,wBAAwB,IAAI,OAAO,UAAU;SACtE,WAAW,EAAE;SACb,OAAO,CAAC,KAAK,EAAE,EAAE,CAAC,CAAC;AACxB,CAAC,CAAC"}
