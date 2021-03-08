@@ -67,7 +67,7 @@ const viteConfig: UserConfig = {
    * directory exists, it will be removed before the build.
    * @default 'dist'
    */
-  outDir: 'vben',
+  outDir: 'admin',
   /**
    * Whether to generate sourcemap
    * @default false
