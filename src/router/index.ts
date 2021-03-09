@@ -8,9 +8,9 @@ import { createGuard } from './guard/';
 import { basicRoutes } from './routes/';
 import { scrollBehavior } from './scrollBehaviour';
 
-// app router ''
+// app router '''file/admin'
 const router = createRouter({
-  history: createWebHistory('file/admin'),
+  history: createWebHistory(),
   routes: basicRoutes as RouteRecordRaw[],
   // strict: true,
   scrollBehavior: scrollBehavior,
