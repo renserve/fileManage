@@ -134,6 +134,8 @@ class User extends VuexModule {
      */
     @Action
     async loginOut(goLogin = false) {
+        this.commitUserInfoState({});
+        this.commitTokenState([]);
         goLogin && router.push(PageEnum.BASE_LOGIN);
     }
     
