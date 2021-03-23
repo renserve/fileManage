@@ -26,6 +26,12 @@
         <div class="upload-modal-toolbar">
             <Alert :message="getHelpText" type="info" banner class="upload-modal-toolbar__text"></Alert>
             <div>
+                <a-tooltip placement="top">
+                    <template #title>
+                        <span>大文件上传(超过100M)</span>
+                    </template>
+                    <a-switch checked-children="开" un-checked-children="关" v-model:checked="bigfile" />
+                </a-tooltip>
                 <Upload
                     :accept="getStringAccept"
                     :multiple="multiple"
@@ -55,7 +61,7 @@ import {createTableColumns, createActionColumn} from './data';
 import {checkFileType, checkImgType, getBase64WithFile} from './utils';
 import {buildUUID} from '/@/utils/uuid';
 import {createImgPreview} from '/@/components/Preview/index';
-import {uploadApi} from '/@/api/file/upload';
+import {uploadApi,bigUploadApi} from '/@/api/file/upload';
 import {isFunction} from '/@/utils/is';
 import {warn} from '/@/utils/log';
 import FileList from './FileList';
@@ -74,7 +80,7 @@ export default defineComponent({
         const state = reactive<{ fileList: FileItem[] }>({
             fileList: [],
         });
-
+        const bigfile= ref(false)
         const [register, {closeModal}] = useModalInner();
 
         const {accept, helpText, maxNumber, maxSize} = toRefs(props);
@@ -181,7 +187,7 @@ export default defineComponent({
             }
             try {
                 item.status = UploadResultStatus.UPLOADING;
-                const {data} = await uploadApi(
+                const {data} = await (bigfile.value?bigUploadApi(
                     {
                         ...(props.uploadParams || {}),
                         file: item.file
@@ -190,7 +196,16 @@ export default defineComponent({
                         const complete = ((progressEvent.loaded / progressEvent.total) * 100) | 0;
                         item.percent = complete;
                     }
-                );
+                ):uploadApi(
+                    {
+                        ...(props.uploadParams || {}),
+                        file: item.file
+                    },
+                    function onUploadProgress(progressEvent: ProgressEvent) {
+                        const complete = ((progressEvent.loaded / progressEvent.total) * 100) | 0;
+                        item.percent = complete;
+                    }
+                ));
                 item.status = UploadResultStatus.SUCCESS;
                 item.responseData = data;
                 return {
@@ -290,6 +305,7 @@ export default defineComponent({
             getHelpText,
             getStringAccept,
             getOkButtonProps,
+            bigfile,
             beforeUpload,
             // registerTable,
             fileListRef,

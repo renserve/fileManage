@@ -3,6 +3,7 @@ import {UploadFileParams} from "/@/utils/http/axios/types";
 // import {} from './model/uploadModel';
 enum Api {
     uploadImg='/cms/file',
+    uploadBigImg='/cms/bigfile',
     FileGroup='/cms/file_group',
     FileGroupOperate='/cms/file_group/file',
     RecoverFileGroupOperate='/cms/file_group/recover/file',
@@ -89,6 +90,18 @@ export function delFileGroup(id,type) {
 }
 
 
+export function bigUploadApi(
+    params: UploadFileParams,
+    onUploadProgress: (progressEvent: ProgressEvent) => void
+) {
+    return defHttp.uploadFile(
+        {
+            url: Api.uploadBigImg,
+            onUploadProgress,
+        },
+        params
+    );
+}
 export function uploadApi(
     params: UploadFileParams,
     onUploadProgress: (progressEvent: ProgressEvent) => void

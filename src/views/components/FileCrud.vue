@@ -7,6 +7,12 @@
                 </template>
                 <a-switch checked-children="开" un-checked-children="关" v-model:checked="fileExpand" />
             </a-tooltip>
+           <!-- <a-tooltip placement="top">
+                <template #title>
+                    <span>大文件上传(超过100M)</span>
+                </template>
+                <a-switch checked-children="开" un-checked-children="关" v-model:checked="bigfile" />
+            </a-tooltip>-->
             <BasicForm @register="register" @submit="handleSubmit"/>
             <div>
                 <a-button v-if="isRecycle" class="mr_btn" type="primary" @click="batchRecover()">批量恢复</a-button>
@@ -55,7 +61,7 @@ import FileTree from '/@/views/components/FileTree.vue';
 import Dialog from "/@/views/components/Dialog.vue";
 import SourceList from "/@/views/components/SourceList.vue";
 import {
-    uploadApi, getFileGroup, updateFileGroup, delFileGroup, saveFileGroup,
+    uploadApi,bigUploadApi, getFileGroup, updateFileGroup, delFileGroup, saveFileGroup,
     getFileGroupType, addFileGroup, deleteFileGroup, recoverFileGroup
 } from '/@/api/file/upload';
 import {useTableMixin, getFormColumn} from '/@/mixins/hooks/useTable'
@@ -213,6 +219,8 @@ export default defineComponent({
         const totalPage = ref(null)
         const showFileList = ref(null)
         const loading= ref(false)
+        const bigfile= ref(false)
+
         const sendData = reactive({page: 0, count: 30, folder_id: null, isDelete: 0})
         const instance = getCurrentInstance()
         provide('sendData',sendData)
@@ -254,8 +262,9 @@ export default defineComponent({
             relyObject,
         })
         const treeData = computed(() => isInit() && getDataSource())
+        // console.log(bigfile.value,'bigfile.value')
         const schemas: FormSchema[] = computed(() => {
-            const options = isInit() && getDataSource() || []
+            const options = isInit() && getDataSource() || [];
             return [
                 {
                     field: 'paths',
@@ -269,7 +278,7 @@ export default defineComponent({
                         maxSize:props.maxSize,
                         accept:fileExpand.value?[]:props.accept,
                         uploadParams:{data:{type: props.type}},
-                        api: uploadApi,
+                        api: bigfile.value?bigUploadApi:uploadApi,
                     },
                 },
                 {
@@ -307,6 +316,7 @@ export default defineComponent({
         return {
             sendData,
             leafData,
+            bigfile,
             loading,
             totalPage,
             fileExpand,
