@@ -27,9 +27,14 @@
                         </a-input>
                     </div>
                 </a-checkbox>
-                <a-button @click="fileType[type].fun(index)" size="small">
-                    {{filePath===item.path?'暂停':fileType[type].text}}
-                </a-button>
+                <div class="buttonGroup">
+                    <a-button @click="copyPath(item.path)" size="small">
+                        复制
+                    </a-button>
+                    <a-button @click="fileType[type].fun(index)" size="small">
+                        {{filePath===item.path?'暂停':fileType[type].text}}
+                    </a-button>
+                </div>
             </div>
         </template>
         <BasicModal :width="700" @cancel="handleCancel" :canFullscreen="false" v-if="type==='video'" @register="register" :footer="null" v-bind="$attrs" :title="fileType.video.title">
@@ -37,6 +42,7 @@
                 <source :src="filePath">
             </video>
         </BasicModal>
+
         <audio v-if="type==='audio'" :src="filePath" ref="music" loop="loop" hidden></audio>
     </div>
 </template>
@@ -54,6 +60,8 @@ import { createImgPreview } from '/@/components/Preview/index';
 import txtPng from '/@/assets/images/KHCFDC_TXT.png'
 import videoPng from '/@/assets/images/video.png'
 import audioPng from '/@/assets/images/audio.png'
+import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
+import { message } from 'ant-design-vue';
 export default {
     name: "FileList",
     props: ['showFileList','gapGroup','type'],
@@ -121,6 +129,14 @@ export default {
         }
     },
     methods:{
+
+        copyPath(p){
+            const { clipboardRef, copiedRef } = useCopyToClipboard();
+            clipboardRef.value = p;
+            if (copiedRef) {
+                message.success('复制成功！');
+            }
+        },
         handleCancel(){
             console.log('取消')
             this.filePath=''
@@ -172,6 +188,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+
 .video-js {
     width: 100%;
     height: 400px;
@@ -190,10 +207,13 @@ export default {
         border: 1px solid #ddd;
         border-radius: 5px;
         position:relative;
-        button {
+        .buttonGroup {
             position: absolute;
             right: 0px;
             top: 0px;
+            button {
+                margin-left: 12px;
+            }
         }
         /*&:hover button{
             display: block;

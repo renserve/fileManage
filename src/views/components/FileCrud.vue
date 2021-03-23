@@ -34,6 +34,9 @@
                 <a-alert v-if="isRecycle" message="当前展示内容为回收站内容" banner/>
                 <SourceList :type="type" ref="SourceList" :gapGroup="isRecycle?showFileList.length:6"
                           :showFileList="showFileList"></SourceList>
+                <div class="loadMoreWrap" v-show="totalPage > sendData.page+1">
+                    <a-button :loading="loading" size="large" block @click="loadMore()">加载更多...</a-button>
+                </div>
             </template>
         </FileTree>
         <Dialog ref="Dialog"
@@ -78,6 +81,12 @@ export default defineComponent({
         }
     },
     methods: {
+        loadMore(){
+            if(this.sendData.page+1<this.totalPage){
+                this.sendData.page++
+            }
+            this.reloadFileList(false)
+        },
         batchRecover() {
             const ids = this.$refs.SourceList.getSelect()
             const that = this
@@ -123,7 +132,6 @@ export default defineComponent({
             this.setFieldsValue({
                 folder_id
             })
-            console.log(record)
             if (isFile) {
                 this.showFileList = [{path: record.path, id: record.realId, name: record.name,title:record.title}]
             } else {
@@ -202,16 +210,23 @@ export default defineComponent({
             rowDeleteApi: delFileGroup
         }
         const leafData = ref(null)
+        const totalPage = ref(null)
         const showFileList = ref(null)
+        const loading= ref(false)
         const sendData = reactive({page: 0, count: 30, folder_id: null, isDelete: 0})
         const instance = getCurrentInstance()
-
-        function reloadFileList() {
-            sendData.page = 0
+        provide('sendData',sendData)
+        function reloadFileList(isReload=true) {
+            if(isReload){
+                sendData.page = 0;
+            }
+            loading.value=true;
             const FileListRef = instance.refs.SourceList
             FileListRef && FileListRef.resetSelect()
             getFileGroupType(props.type, sendData).then(res => {
                 !sendData.page && (leafData.value = [])
+                totalPage.value=res.total_page
+                loading.value=false
                 leafData.value = concat(leafData.value, res.items.map(item => {
                     return {
                         parent_id: item.folder_id,
@@ -227,6 +242,8 @@ export default defineComponent({
                 showFileList.value = leafData.value.map(i => {
                     return {path: i.path, id: i.realId, name: i.name,title: i.title}
                 })
+            }).catch(()=>{
+                loading.value=false
             })
         }
 
@@ -290,6 +307,8 @@ export default defineComponent({
         return {
             sendData,
             leafData,
+            loading,
+            totalPage,
             fileExpand,
             showFileList,
             reloadFileList,
@@ -307,6 +326,9 @@ export default defineComponent({
 });
 </script>
 <style lang="less" scoped>
+.loadMoreWrap {
+    margin-bottom: 50px;
+}
 :deep(.collapse-container__body) {
     display: flex;
     justify-content: space-between;
