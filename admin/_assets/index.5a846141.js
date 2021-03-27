@@ -1,0 +1,1 @@
+import{a,bc as e,i as r,a2 as t,a1 as n}from"./index.953c91ca.js";var s=a({name:"Redirect",setup(){const{currentRoute:a,replace:s}=n(),{getOpenPageLoading:i,getEnableTransition:o}=e(),{params:u,query:c}=r(a),{path:p}=u;return s({path:"/"+(Array.isArray(p)?p.join("/"):p),query:c}),r(o)&&r(i)&&setTimeout((()=>{t.setPageLoadingAction(!1)}),0),()=>null}});export default s;

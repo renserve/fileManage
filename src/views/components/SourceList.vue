@@ -1,6 +1,6 @@
 <template>
     <div class="fileWrapper">
-        <template v-for="(item,index) in showFileList">
+        <template v-for="(item,index) in showFileList" :key="item.path">
             <div v-if="!((index-gapGroup) % gapGroup) || !index" class="quickSelect">
                 <a-checkbox
                     :key="item.id"
